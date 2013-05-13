@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 #
-# $Id: qproxy.pl 14480 2013-05-13 08:26:20Z jakob $
-#
 # Copyright (c) 2013 Kirei AB. All rights reserved.
 #
 # THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR

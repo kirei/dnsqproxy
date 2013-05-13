@@ -22,20 +22,14 @@ my $query     = new Net::DNS::Packet(\$raw_query);
 my $raw_response = decode_base64($blob->{response});
 my $response     = new Net::DNS::Packet(\$raw_response);
 
-print "########################################\n";
-print "#\n";
-print "# JSON\n";
-print "#\n";
-print $json,"\n";
+print STDERR "RESPONSE $json\n";
 
-print "########################################\n";
-print "#\n";
-print "# QUERY\n";
-print "#\n";
-print $query->string;
+print STDERR "\n";
+print STDERR "########## QUERY\n";
+print STDERR "\n";
+print STDERR $query->string;
 
-print "########################################\n";
-print "#\n";
-print "# RESPONSE\n";
-print "#\n";
-print $response->string;
+print STDERR "\n";
+print STDERR "########## RESPONSE\n";
+print STDERR "\n";
+print STDERR $response->string;

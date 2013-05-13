@@ -18,8 +18,6 @@ my $q1 = {
 
 my $json = to_json($q1);
 
-print STDERR "########################################\n";
-print STDERR "#\n";
-print STDERR "# QUERY $json\n";
-print STDERR "#\n";
+print STDERR "QUERY $json\n";
+
 print $json, "\n";
