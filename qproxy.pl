@@ -29,7 +29,6 @@ my $version = sprintf("qproxy 0.0 Net::DNS %s", Net::DNS->version);
 
 sub main {
     while (<STDIN>) {
-        exit(0) if ($_ eq "");
         chomp;
         exit(0) if ($_ eq "");
 
@@ -61,7 +60,7 @@ sub main {
             'version' => $version,
         };
 
-        print to_json($blob, { utf8 => 1 });
+        print to_json($blob, { utf8 => 1 }), "\n";
     }
 }
 
@@ -73,7 +72,7 @@ sub fatal {
         'version' => $version,
     };
 
-    print to_json($blob, { utf8 => 1 });
+    print to_json($blob, { utf8 => 1 }), "\n";
 
     exit(0);
 }
