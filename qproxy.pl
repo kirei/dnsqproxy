@@ -176,7 +176,6 @@ sub is_boolean {
 
 main;
 
-
 __END__
 
 =head1 NAME
@@ -185,25 +184,27 @@ qproxy.pl - a simple DNS query proxy tool using JSON
 
 =head1 SYNOPSIS
 
-qproxy.pl < dnsquery.json > dnsanswer.json
+qproxy.pl < query.json > response.json
 
 No command line parameters are currently supported.
 
 The input JSON queries comes in on STDIN, one JSON blob per line.
+
 The output DNS answer comes out on STDOUT, one JSON blob per line.
 
-=head1 JSON query format
+=head1 JSON Query Format
 
 A typical DNS query line looks like this:
 
 {"tcp_timeout":10,"transport":"udp","flags":{"cd":0,"ad":0,"do":0,"rd":1},"port":53,"qtype":"SOA","qclass":"IN","bufsize":1024,"qname":"kirei.se","address":"8.8.8.8","udp_timeout":10}
 
-=head1 JSON answer format
+=head1 JSON Answer Format
 
-A typical DNS answer answer line looks like this:
+A typical DNS response answer line looks like this:
 
 {"time ":0.015586,"transport":"udp","version":"qproxy 0.0 Net::DNS 0.66","response":"XumBgAABAAAAAAAABWtpcmVpAnNlAAAGAAE=","query":"XukBAAABAAAAAAAABWtpcmVpAnNlAAAGAAE=","address":"8.8.8.8","port":"53"}
 
-The raw query packet is encoded as base64, and the response is also encoded in base64.
+The raw query packet is encoded as base64, and the response is also encoded in
+base64.
 
 =cut
