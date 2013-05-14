@@ -162,7 +162,7 @@ sub setup_resolver {
 
 sub is_ip {
     my $ip = shift;
-    return (ip_is_ipv4($ip) or ip_is_ipv4($ip));
+    return (ip_is_ipv4($ip) or ip_is_ipv6($ip));
 }
 
 sub is_port {
