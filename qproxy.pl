@@ -89,13 +89,8 @@ sub fatal {
 sub setup_resolver {
     my $param = shift;
 
-    # Check for required parameters
-    fatal("Missing address") unless defined($param->{address});
-    fatal("Missing QNAME")   unless defined($param->{qname});
-    fatal("Missing QCLASS")  unless defined($param->{qclass});
-    fatal("Missing QTYPE")   unless defined($param->{qtype});
-
     # Set defaults
+    $param->{qclass}      //= "IN";
     $param->{port}        //= 53;
     $param->{transport}   //= "udp";
     $param->{tcp_timeout} //= 60;
@@ -105,6 +100,12 @@ sub setup_resolver {
     $param->{flags}->{rd} //= 0;
     $param->{flags}->{ad} //= 0;
     $param->{flags}->{do} //= 0;
+
+    # Check for required parameters
+    fatal("Missing address") unless defined($param->{address});
+    fatal("Missing QNAME")   unless defined($param->{qname});
+    fatal("Missing QCLASS")  unless defined($param->{qclass});
+    fatal("Missing QTYPE")   unless defined($param->{qtype});
 
     # Validate input
     fatal("Failed to parse address")
