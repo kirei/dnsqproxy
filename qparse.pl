@@ -7,7 +7,7 @@ use Net::DNS;
 use MIME::Base64;
 use JSON;
 
-while ( <STDIN> ) {
+while ( <> ) {
     chomp;
     my $json = $_;
 
@@ -18,11 +18,12 @@ while ( <STDIN> ) {
 
     my $blob = from_json( $json );
 
+    ## no critic (Modules::RequireExplicitInclusion)
     my $raw_query = decode_base64( $blob->{query} );
-    my $query     = new Net::DNS::Packet( \$raw_query );
+    my $query     = Net::DNS::Packet->new( \$raw_query );
 
     my $raw_response = decode_base64( $blob->{response} );
-    my $response     = new Net::DNS::Packet( \$raw_response );
+    my $response     = Net::DNS::Packet->new( \$raw_response );
 
     print STDERR "########## QUERY DUMP\n";
     print STDERR "\n";
