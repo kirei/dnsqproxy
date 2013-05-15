@@ -4,7 +4,7 @@ use strict;
 use JSON;
 
 my $qname    = ".";
-my @servers  = ("192.36.148.17", "2001:7fe::53");
+my @servers  = ( "192.36.148.17", "2001:7fe::53" );
 my $nxdomain = "4089e55b9193d26bfbbf968ea1283fe93f01f755";
 
 my %template = (
@@ -17,8 +17,8 @@ my %template = (
     'udp_timeout' => 1,
 );
 
-foreach my $server (@servers) {
-    foreach my $transport ("udp", "tcp") {
+foreach my $server ( @servers ) {
+    foreach my $transport ( "udp", "tcp" ) {
 
         my %query = %template;
 
@@ -30,36 +30,36 @@ foreach my $server (@servers) {
         $query{qname} = $qname;
         $query{qtype} = "SOA";
         $query{flags} = { do => 0, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        print to_json( \%query ), "\n";
 
         # SOA with DO=1
         $query{qname} = $qname;
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        print to_json( \%query ), "\n";
 
         # NS
         $query{qname} = $qname;
         $query{qtype} = "NS";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        print to_json( \%query ), "\n";
 
         # DNSKEY
         $query{qname} = $qname;
         $query{qtype} = "DNSKEY";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        print to_json( \%query ), "\n";
 
         # NXDOMAIN
-        $query{qname} = sprintf("%s.%s", $nxdomain, $qname);
+        $query{qname} = sprintf( "%s.%s", $nxdomain, $qname );
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        print to_json( \%query ), "\n";
 
         # RECURSION
         $query{qname} = "icann.org";
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 1, ad => 0 };
-        print to_json(\%query), "\n";
+        print to_json( \%query ), "\n";
     }
 }
