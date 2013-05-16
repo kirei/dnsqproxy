@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+use utf8;
+use warnings;
 use strict;
 use Net::DNS;
 use MIME::Base64;
