@@ -110,7 +110,6 @@ sub setup_resolver {
     # Check for required parameters
     fatal("Missing address") unless defined($param->{address});
     fatal("Missing QNAME")   unless defined($param->{qname});
-    fatal("Missing QCLASS")  unless defined($param->{qclass});
     fatal("Missing QTYPE")   unless defined($param->{qtype});
 
     # Validate input
