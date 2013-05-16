@@ -18,8 +18,15 @@ my %template = (
 
     # quick test timers
     'tcp_timeout' => 1,
-    'udp_timeout' => 1,
+    'retrans'     => 5,
+    'retry'       => 2,
 );
+
+sub xmit($) {
+    my $json = to_json(shift);
+    print STDERR "QUERY: ", $json, "\n";
+    print $json, "\n";
+}
 
 foreach my $server (@servers) {
     foreach my $transport (@transports) {
@@ -28,42 +35,41 @@ foreach my $server (@servers) {
 
         $query{address}   = $server;
         $query{transport} = $transport;
-        $query{qclass}    = "IN";
 
         # SOA without DO=1
         $query{qname} = $qname;
         $query{qtype} = "SOA";
         $query{flags} = { do => 0, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        xmit(\%query);
 
         # SOA with DO=1
         $query{qname} = $qname;
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        xmit(\%query);
 
         # NS
         $query{qname} = $qname;
         $query{qtype} = "NS";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        xmit(\%query);
 
         # DNSKEY
         $query{qname} = $qname;
         $query{qtype} = "DNSKEY";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        xmit(\%query);
 
         # NXDOMAIN
         $query{qname} = sprintf("%s.%s", $nxdomain, $qname);
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
-        print to_json(\%query), "\n";
+        xmit(\%query);
 
         # RECURSION
         $query{qname} = $recursive;
         $query{qtype} = "SOA";
         $query{flags} = { do => 0, cd => 0, rd => 1, ad => 0 };
-        print to_json(\%query), "\n";
+        xmit(\%query);
     }
 }
