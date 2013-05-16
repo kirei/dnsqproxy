@@ -103,7 +103,9 @@ sub setup_resolver {
     $param->{port}        //= 53;
     $param->{transport}   //= "udp";
     $param->{tcp_timeout} //= 60;
-    $param->{udp_timeout} //= 60;
+    $param->{udp_timeout} //= undef;
+    $param->{retrans}     //= 5;
+    $param->{retry}       //= 2;
     $param->{bufsize}     //= 512;
     $param->{flags}->{cd} //= 0;
     $param->{flags}->{rd} //= 0;
@@ -126,15 +128,27 @@ sub setup_resolver {
       unless (lc($param->{transport}) eq "tcp"
         or lc($param->{transport}) eq "udp");
 
-    fatal("Invalid UDP timeout")
-      unless ($param->{udp_timeout} =~ /^\d+$/
-        and $param->{udp_timeout} > 0
-        and $param->{udp_timeout} <= 60);
-
     fatal("Invalid TCP timeout")
       unless ($param->{tcp_timeout} =~ /^\d+$/
         and $param->{tcp_timeout} > 0
         and $param->{tcp_timeout} <= 60);
+
+    if ($param->{udp_timeout}) {
+        fatal("Invalid UDP timeout")
+          unless ($param->{udp_timeout} =~ /^\d+$/
+            and $param->{udp_timeout} > 0
+            and $param->{udp_timeout} <= 60);
+    }
+
+    fatal("Invalid retransmission interval")
+      unless ($param->{retrans} =~ /^\d+$/
+        and $param->{retrans} > 0
+        and $param->{retrans} <= 60);
+
+    fatal("Invalid number of retries")
+      unless ($param->{retry} =~ /^\d+$/
+        and $param->{retry} >= 0
+        and $param->{retry} <= 10);
 
     fatal("Invalid UDP buffer size")
       unless ($param->{bufsize} =~ /^\d+$/
@@ -157,11 +171,11 @@ sub setup_resolver {
     $res->recurse($param->{flags}->{rd});
     $res->adflag($param->{flags}->{ad});
     $res->cdflag($param->{flags}->{cd});
-    $res->dnsrch(0);      # do not use DNS search path
-    $res->defnames(0);    # no default names
-    $res->retrans(5);     # retransmit interval 5 seconds
-    $res->retry(2);       # retry query X times
-    $res->igntc(1);       # ignore TC
+    $res->retrans($param->{retrans});    # retransmission interval
+    $res->retry($param->{retry});        # query retries
+    $res->dnsrch(0);                     # do not use DNS search path
+    $res->defnames(0);                   # no default names
+    $res->igntc(1);                      # ignore TC
 
     # set EDNS0 buffer size only if DO=1 and TCP is not used
     if ($res->dnssec and not $res->usevc) {

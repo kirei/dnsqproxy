@@ -21,7 +21,10 @@ The following query elements must be specified and has no defaults.
 
 - **port** -- destination port (default 53)
 - **tcp_timeout** -- TCP timeout in seconds (default 60)
-- **udp_timeout** UDP timeout in seconds (default 60)
+- **udp_timeout** -- UDP timeout in seconds (no default, retrans/retry used for
+  retransmission)
+- **retrans** -- retransmission interval (default 5)
+- **retry** -- number of times to retry to query (default 2)
 - **transport** -- TCP or UDP (default "UDP")
 - **qclass** -- query class (default "IN")
 - **bufsize** -- EDNS0 buffer size (default 512)
