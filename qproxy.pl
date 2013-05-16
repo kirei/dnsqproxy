@@ -50,8 +50,8 @@ sub main {
 
         my $resolver = setup_resolver($param);
 
-        my $query =
-          new Net::DNS::Packet($param->{qname}, $param->{qtype},
+        ## no critic (Modules::RequireExplicitInclusion)
+        my $query = Net::DNS::Packet->new($param->{qname}, $param->{qtype},
             $param->{qclass});
 
         my $t1       = [gettimeofday];
@@ -78,6 +78,8 @@ sub main {
 
         print to_json($blob, { utf8 => 1 }), "\n";
     }
+
+    return;
 }
 
 sub fatal {
@@ -146,6 +148,7 @@ sub setup_resolver {
     fatal("Failed to parse DO flag") unless is_boolean($param->{flags}->{do});
 
     # Set up resolver
+    ## no critic (Modules::RequireExplicitInclusion)
     my $res = Net::DNS::Resolver->new;
     $res->nameserver($param->{address});
     $res->port($param->{port});
@@ -180,7 +183,12 @@ sub is_port {
 
 sub is_boolean {
     my $x = shift;
-    return 1 if ($x == 0 or $x == 1);
+
+    if ($x == 0 or $x == 1) {
+        return 1;
+    } else {
+        return;
+    }
 }
 
 main;
