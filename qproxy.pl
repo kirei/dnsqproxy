@@ -157,6 +157,7 @@ sub setup_resolver {
     $res->defnames(0);    # no default names
     $res->retrans(5);     # retransmit interval 5 seconds
     $res->retry(2);       # retry query X times
+    $res->igntc(1);       # ignore TC
 
     # set EDNS0 buffer size only if DO=1 and TCP is not used
     if ($res->dnssec and not $res->usevc) {
