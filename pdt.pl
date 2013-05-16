@@ -3,9 +3,11 @@
 use strict;
 use JSON;
 
-my $qname    = ".";
-my @servers  = ("192.36.148.17", "2001:7fe::53");
-my $nxdomain = "4089e55b9193d26bfbbf968ea1283fe93f01f755";
+my $qname      = ".";
+my @servers    = ("192.36.148.17", "2001:7fe::53");
+my $nxdomain   = "4089e55b9193d26bfbbf968ea1283fe93f01f755";
+my $recursive  = "example.com";
+my @transports = ("udp", "tcp");
 
 my %template = (
 
@@ -18,7 +20,7 @@ my %template = (
 );
 
 foreach my $server (@servers) {
-    foreach my $transport ("udp", "tcp") {
+    foreach my $transport (@transports) {
 
         my %query = %template;
 
@@ -57,9 +59,9 @@ foreach my $server (@servers) {
         print to_json(\%query), "\n";
 
         # RECURSION
-        $query{qname} = "icann.org";
+        $query{qname} = $recursive;
         $query{qtype} = "SOA";
-        $query{flags} = { do => 1, cd => 0, rd => 1, ad => 0 };
+        $query{flags} = { do => 0, cd => 0, rd => 1, ad => 0 };
         print to_json(\%query), "\n";
     }
 }
