@@ -115,8 +115,8 @@ sub setup_resolver {
       unless ($param->{port} =~ /^\d+$/ and is_port($param->{port}));
 
     fatal("Failed to parse transport")
-      unless ($param->{transport} eq "tcp"
-        or $param->{transport} eq "udp");
+      unless (lc($param->{transport}) eq "tcp"
+        or lc($param->{transport}) eq "udp");
 
     fatal("Invalid UDP timeout")
       unless ($param->{udp_timeout} =~ /^\d+$/
@@ -143,7 +143,7 @@ sub setup_resolver {
     my $res = Net::DNS::Resolver->new;
     $res->nameserver($param->{address});
     $res->port($param->{port});
-    $res->usevc($param->{transport} eq "tcp" ? 1 : 0);
+    $res->usevc(lc($param->{transport}) eq "tcp" ? 1 : 0);
     $res->dnssec($param->{flags}->{do});
     $res->recurse($param->{flags}->{rd});
     $res->adflag($param->{flags}->{ad});
@@ -153,6 +153,7 @@ sub setup_resolver {
     $res->retrans(5);
     $res->retry(4);
 
+    # set EDNS0 buffer size only if DO=1 and TCP is not used
     if ($res->dnssec and not $res->usevc) {
         $res->udppacketsize($param->{bufsize});
     }
