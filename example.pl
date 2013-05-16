@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+use utf8;
+use warnings;
 use strict;
 use JSON;
 
@@ -16,4 +18,4 @@ my $query = {
     flags       => { do => 0, cd => 0, rd => 1, ad => 0 },
 };
 
-print to_json($query), "\n";
+print to_json( $query ), "\n";

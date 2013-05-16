@@ -25,6 +25,7 @@
 #
 ######################################################################
 
+use utf8;
 use strict;
 use warnings;
 use Net::DNS;
@@ -34,43 +35,44 @@ use JSON;
 use Net::IP qw(:PROC);
 use Data::Dumper;
 
-my $version = sprintf("qproxy 0.0 Net::DNS %s", Net::DNS->version);
+my $version = sprintf( "qproxy 0.0 Net::DNS %s", Net::DNS->version );
 
 sub main {
-    while (<STDIN>) {
+    while ( <> ) {
         chomp;
-        exit(0) if ($_ eq "");
+        exit( 0 ) if ( $_ eq "" );
 
         my $param = undef;
-        eval { $param = from_json($_); };
-        if ($@) {
-            fatal("Failed to parse JSON input");
+        eval { $param = from_json( $_ ); };
+        if ( $@ ) {
+            fatal( "Failed to parse JSON input" );
         }
 
-        my $resolver = setup_resolver($param);
+        my $resolver = setup_resolver( $param );
 
-        my $query =
-          new Net::DNS::Packet($param->{qname}, $param->{qtype},
-            $param->{qclass});
+        ## no critic (Modules::RequireExplicitInclusion)
+        my $query = Net::DNS::Packet->new( $param->{qname}, $param->{qtype}, $param->{qclass} );
 
         my $t1       = [gettimeofday];
-        my $response = $resolver->send($query);
+        my $response = $resolver->send( $query );
         my $t2       = [gettimeofday];
 
         my $blob = {
             'address'   => $param->{address},
             'port'      => $param->{port},
             'transport' => $param->{transport},
-            'time '     => tv_interval($t1, $t2),
-            'query'     => $query ? encode_base64($query->data, "") : "",
+            'time '     => tv_interval( $t1, $t2 ),
+            'query'     => $query ? encode_base64( $query->data, "" ) : "",
             'response'  => $response
-            ? encode_base64($response->data, "")
+            ? encode_base64( $response->data, "" )
             : "",
             'version' => $version,
         };
 
-        print to_json($blob, { utf8 => 1 }), "\n";
+        print to_json( $blob, { utf8 => 1 } ), "\n";
     }
+
+    return;
 }
 
 sub fatal {
@@ -81,9 +83,9 @@ sub fatal {
         'version' => $version,
     };
 
-    print to_json($blob, { utf8 => 1 }), "\n";
+    print to_json( $blob, { utf8 => 1 } ), "\n";
 
-    exit(0);
+    exit( 0 );
 }
 
 sub setup_resolver {
@@ -102,59 +104,60 @@ sub setup_resolver {
     $param->{flags}->{do} //= 0;
 
     # Check for required parameters
-    fatal("Missing address") unless defined($param->{address});
-    fatal("Missing QNAME")   unless defined($param->{qname});
-    fatal("Missing QCLASS")  unless defined($param->{qclass});
-    fatal("Missing QTYPE")   unless defined($param->{qtype});
+    fatal( "Missing address" ) unless defined( $param->{address} );
+    fatal( "Missing QNAME" )   unless defined( $param->{qname} );
+    fatal( "Missing QCLASS" )  unless defined( $param->{qclass} );
+    fatal( "Missing QTYPE" )   unless defined( $param->{qtype} );
 
     # Validate input
-    fatal("Failed to parse address")
-      unless is_ip($param->{address});
+    fatal( "Failed to parse address" )
+      unless is_ip( $param->{address} );
 
-    fatal("Failed to parse port")
-      unless ($param->{port} =~ /^\d+$/ and is_port($param->{port}));
+    fatal( "Failed to parse port" )
+      unless ( $param->{port} =~ /^\d+$/ and is_port( $param->{port} ) );
 
-    fatal("Failed to parse transport")
-      unless ($param->{transport} eq "tcp"
-        or $param->{transport} eq "udp");
+    fatal( "Failed to parse transport" )
+      unless ( $param->{transport} eq "tcp"
+        or $param->{transport} eq "udp" );
 
-    fatal("Invalid UDP timeout")
-      unless ($param->{udp_timeout} =~ /^\d+$/
+    fatal( "Invalid UDP timeout" )
+      unless ( $param->{udp_timeout} =~ /^\d+$/
         and $param->{udp_timeout} > 0
-        and $param->{udp_timeout} <= 60);
+        and $param->{udp_timeout} <= 60 );
 
-    fatal("Invalid TCP timeout")
-      unless ($param->{tcp_timeout} =~ /^\d+$/
+    fatal( "Invalid TCP timeout" )
+      unless ( $param->{tcp_timeout} =~ /^\d+$/
         and $param->{tcp_timeout} > 0
-        and $param->{tcp_timeout} <= 60);
+        and $param->{tcp_timeout} <= 60 );
 
-    fatal("Invalid UDP buffer size")
-      unless ($param->{bufsize} =~ /^\d+$/
+    fatal( "Invalid UDP buffer size" )
+      unless ( $param->{bufsize} =~ /^\d+$/
         and $param->{bufsize} > 0
-        and $param->{bufsize} <= 65536);
+        and $param->{bufsize} <= 65536 );
 
     # Validate flags
-    fatal("Failed to parse CD flag") unless is_boolean($param->{flags}->{cd});
-    fatal("Failed to parse RD flag") unless is_boolean($param->{flags}->{rd});
-    fatal("Failed to parse AD flag") unless is_boolean($param->{flags}->{ad});
-    fatal("Failed to parse DO flag") unless is_boolean($param->{flags}->{do});
+    fatal( "Failed to parse CD flag" ) unless is_boolean( $param->{flags}->{cd} );
+    fatal( "Failed to parse RD flag" ) unless is_boolean( $param->{flags}->{rd} );
+    fatal( "Failed to parse AD flag" ) unless is_boolean( $param->{flags}->{ad} );
+    fatal( "Failed to parse DO flag" ) unless is_boolean( $param->{flags}->{do} );
 
     # Set up resolver
+    ## no critic (Modules::RequireExplicitInclusion)
     my $res = Net::DNS::Resolver->new;
-    $res->nameserver($param->{address});
-    $res->port($param->{port});
-    $res->usevc($param->{transport} eq "tcp" ? 1 : 0);
-    $res->dnssec($param->{flags}->{do});
-    $res->recurse($param->{flags}->{rd});
-    $res->adflag($param->{flags}->{ad});
-    $res->cdflag($param->{flags}->{cd});
-    $res->dnsrch(0);
-    $res->defnames(0);
-    $res->retrans(5);
-    $res->retry(4);
+    $res->nameserver( $param->{address} );
+    $res->port( $param->{port} );
+    $res->usevc( $param->{transport} eq "tcp" ? 1 : 0 );
+    $res->dnssec( $param->{flags}->{do} );
+    $res->recurse( $param->{flags}->{rd} );
+    $res->adflag( $param->{flags}->{ad} );
+    $res->cdflag( $param->{flags}->{cd} );
+    $res->dnsrch( 0 );
+    $res->defnames( 0 );
+    $res->retrans( 5 );
+    $res->retry( 4 );
 
-    if ($res->dnssec and not $res->usevc) {
-        $res->udppacketsize($param->{bufsize});
+    if ( $res->dnssec and not $res->usevc ) {
+        $res->udppacketsize( $param->{bufsize} );
     }
 
     return $res;
@@ -162,17 +165,22 @@ sub setup_resolver {
 
 sub is_ip {
     my $ip = shift;
-    return (ip_is_ipv4($ip) or ip_is_ipv6($ip));
+    return ( ip_is_ipv4( $ip ) or ip_is_ipv6( $ip ) );
 }
 
 sub is_port {
     my $port = shift;
-    return ($port > 0 or $port < 65536);
+    return ( $port > 0 or $port < 65536 );
 }
 
 sub is_boolean {
     my $x = shift;
-    return 1 if ($x == 0 or $x == 1);
+    if ( $x == 0 or $x == 1 ) {
+        return 1;
+    }
+    else {
+        return;
+    }
 }
 
 main;

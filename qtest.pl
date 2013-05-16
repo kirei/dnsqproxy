@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+use utf8;
+use warnings;
 use strict;
 use JSON;
 
@@ -32,6 +34,6 @@ my @queries = (
     },
 );
 
-foreach my $json (map { to_json($_) } @queries) {
+foreach my $json ( map { to_json( $_ ) } @queries ) {
     print $json, "\n";
 }
