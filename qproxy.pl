@@ -153,10 +153,10 @@ sub setup_resolver {
     $res->recurse($param->{flags}->{rd});
     $res->adflag($param->{flags}->{ad});
     $res->cdflag($param->{flags}->{cd});
-    $res->dnsrch(0);
-    $res->defnames(0);
-    $res->retrans(5);
-    $res->retry(2);
+    $res->dnsrch(0);      # do not use DNS search path
+    $res->defnames(0);    # no default names
+    $res->retrans(5);     # retransmit interval 5 seconds
+    $res->retry(2);       # retry query X times
 
     # set EDNS0 buffer size only if DO=1 and TCP is not used
     if ($res->dnssec and not $res->usevc) {
