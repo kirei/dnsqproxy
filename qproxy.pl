@@ -151,7 +151,7 @@ sub setup_resolver {
     $res->dnsrch(0);
     $res->defnames(0);
     $res->retrans(5);
-    $res->retry(4);
+    $res->retry(2);
 
     # set EDNS0 buffer size only if DO=1 and TCP is not used
     if ($res->dnssec and not $res->usevc) {
