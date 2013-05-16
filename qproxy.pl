@@ -63,11 +63,17 @@ sub main {
             'transport' => $param->{transport},
             'time '     => tv_interval($t1, $t2),
             'query'     => $query ? encode_base64($query->data, "") : "",
-            'response'  => $response
-            ? encode_base64($response->data, "")
-            : "",
-            'version' => $version,
+            'version'   => $version,
         };
+
+        if ($response) {
+            $blob->{'response'} =
+              $response
+              ? encode_base64($response->data, "")
+              : "";
+        } else {
+            $blob->{'error'} = $resolver->errorstring;
+        }
 
         print to_json($blob, { utf8 => 1 }), "\n";
     }
