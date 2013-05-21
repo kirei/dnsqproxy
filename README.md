@@ -7,6 +7,15 @@ described in RFC 4627.
 N.B.: This software is not indended to be used for public facing services such
 as a DNS Looking Glass (e.g., https://github.com/bortzmeyer/dns-lg).
 
+
+## Proxy Protocol
+
+- Queries are submitted as JSON, one query per line.
+- Responses are emitted as JSON, one response per line
+- Multiple queries may be submitted in a single session.
+- Session is terminated by an empty command or by end-of-file.
+
+
 ##  Query Elements
 
 ### Mandatory Query Elements
@@ -44,3 +53,7 @@ The following query elements must be specified and has no defaults.
 - **query** -- full DNS query in Base64 format
 - **response** -- full DNS response in Base64 format
 - **error** -- error message (in case of error)
+
+## Examples
+
+    {"qtype":"SOA","qname":"github.com","address":"8.8.8.8","flags":{"rd":1}}
