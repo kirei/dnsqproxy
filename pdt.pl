@@ -5,9 +5,10 @@ use warnings;
 use strict;
 use JSON;
 
-my $qname      = ".";
+my $zone       = "";
 my @servers    = ("192.36.148.17", "2001:7fe::53");
-my $nxdomain   = "4089e55b9193d26bfbbf968ea1283fe93f01f755";
+my $known_good = "se.$zone";
+my $known_bad  = "4089e55b9193d26bfbbf968ea1283fe93f01f755.$zone";
 my $recursive  = "example.com";
 my @transports = ("udp", "tcp");
 
@@ -20,6 +21,9 @@ my %template = (
     'tcp_timeout' => 1,
     'retrans'     => 5,
     'retry'       => 2,
+
+    # EDNS0 buffer size
+    'bufsize' => 1400,
 );
 
 sub xmit($) {
@@ -36,37 +40,43 @@ foreach my $server (@servers) {
         $query{address}   = $server;
         $query{transport} = $transport;
 
-        # SOA without DO=1
-        $query{qname} = $qname;
+        # SOA without DO=1 (DNS02, DNS03, DNS07)
+        $query{qname} = $zone;
         $query{qtype} = "SOA";
         $query{flags} = { do => 0, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
-        # SOA with DO=1
-        $query{qname} = $qname;
+        # SOA with DO=1 (DNS02, DNS03, DNS07)
+        $query{qname} = $zone;
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
-        # NS
-        $query{qname} = $qname;
+        # NS (DNS05, DNS06, DNS08)
+        $query{qname} = $zone;
         $query{qtype} = "NS";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
-        # DNSKEY
-        $query{qname} = $qname;
+        # DNSKEY (DNS16)
+        $query{qname} = $zone;
         $query{qtype} = "DNSKEY";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
-        # NXDOMAIN
-        $query{qname} = sprintf("%s.%s", $nxdomain, $qname);
+        # DELEGATION resulting in referal (DNS09)
+        $query{qname} = $known_good;
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
-        # RECURSION
+        # DELEGATION resulting in NXDOMAIN (DNS17)
+        $query{qname} = $known_bad;
+        $query{qtype} = "SOA";
+        $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
+        xmit(\%query);
+
+        # RECURSION (DNS11)
         $query{qname} = $recursive;
         $query{qtype} = "SOA";
         $query{flags} = { do => 0, cd => 0, rd => 1, ad => 0 };
