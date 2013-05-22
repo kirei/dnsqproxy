@@ -41,7 +41,7 @@ use JSON;
 use Net::IP qw(:PROC);
 use Data::Dumper;
 
-my $version = sprintf("qproxy 0.1 Net::DNS %s", Net::DNS->version);
+my $version = sprintf("qproxy 0.2 Net::DNS %s", Net::DNS->version);
 
 sub main {
     while (<STDIN>) {
