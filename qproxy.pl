@@ -29,6 +29,7 @@ use utf8;
 use warnings;
 use strict;
 use Net::DNS;
+use Net::DNS::SEC;
 use Time::HiRes qw(gettimeofday tv_interval);
 use MIME::Base64;
 use JSON;
