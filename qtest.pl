@@ -9,6 +9,7 @@ my $nameserver = "8.8.8.8";
 
 my @queries = (
     {
+        tag       => "1",
         address   => $nameserver,
         transport => "tcp",
         bufsize   => 1280,
@@ -17,6 +18,7 @@ my @queries = (
         flags     => { do => 1, cd => 0, rd => 1, ad => 0 },
     },
     {
+        tag       => "2",
         address   => $nameserver,
         transport => "udp",
         bufsize   => 512,
@@ -25,6 +27,7 @@ my @queries = (
         flags     => { do => 0, cd => 0, rd => 1, ad => 0 },
     },
     {
+        tag       => "3",
         address   => $nameserver,
         transport => "udp",
         bufsize   => 1024,
