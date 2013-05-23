@@ -46,44 +46,45 @@ sub main {
         chomp;
         exit(0) if ($_ eq "");
 
-        my $param = undef;
-        eval { $param = from_json($_); };
+        my $json_query = undef;
+        eval { $json_query = from_json($_); };
         if ($@) {
             fatal("Failed to parse JSON input");
         }
 
-        my $resolver = setup_resolver($param);
+        my $resolver = setup_resolver($json_query);
 
         ## no critic (Modules::RequireExplicitInclusion)
-        my $query = Net::DNS::Packet->new($param->{qname}, $param->{qtype},
-            $param->{qclass});
+        my $dns_query =
+          Net::DNS::Packet->new($json_query->{qname}, $json_query->{qtype},
+            $json_query->{qclass});
 
-        my $t1       = [gettimeofday];
-        my $response = $resolver->send($query);
-        my $t2       = [gettimeofday];
+        my $t1           = [gettimeofday];
+        my $dns_response = $resolver->send($dns_query);
+        my $t2           = [gettimeofday];
 
-        my $blob = {
-            'address'   => $param->{address},
-            'port'      => $param->{port},
-            'transport' => $param->{transport},
+        my $json_response = {
+            'address'   => $json_query->{address},
+            'port'      => $json_query->{port},
+            'transport' => $json_query->{transport},
             'time '     => tv_interval($t1, $t2),
-            'query'     => $query ? encode_base64($query->data, "") : "",
-            'version'   => $version,
+            'query'   => $dns_query ? encode_base64($dns_query->data, "") : "",
+            'version' => $version,
         };
 
         # set ID if given in query
-        $blob->{tag} = $param->{tag} if ($param->{tag});
+        $json_response->{tag} = $json_query->{tag} if ($json_query->{tag});
 
-        if ($response) {
-            $blob->{'response'} =
-              $response
-              ? encode_base64($response->data, "")
+        if ($dns_response) {
+            $json_response->{'response'} =
+              $dns_response
+              ? encode_base64($dns_response->data, "")
               : "";
         } else {
-            $blob->{'error'} = $resolver->errorstring;
+            $json_response->{'error'} = $resolver->errorstring;
         }
 
-        print to_json($blob, { utf8 => 1 }), "\n";
+        print to_json($json_response, { utf8 => 1 }), "\n";
     }
 
     return;
@@ -92,12 +93,12 @@ sub main {
 sub fatal {
     my $message = shift;
 
-    my $blob = {
+    my $json_response = {
         'error'   => $message,
         'version' => $version,
     };
 
-    print to_json($blob, { utf8 => 1 }), "\n";
+    print to_json($json_response, { utf8 => 1 }), "\n";
 
     exit(0);
 }
