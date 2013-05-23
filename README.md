@@ -28,6 +28,7 @@ The following query elements must be specified and has no defaults.
 
 ### Optional Query Elements
 
+- **tag** -- query/response tag (no default)
 - **port** -- destination port (default 53)
 - **tcp_timeout** -- TCP timeout in seconds (default 60)
 - **udp_timeout** -- UDP timeout in seconds (no default, retrans/retry used for
@@ -45,6 +46,7 @@ The following query elements must be specified and has no defaults.
 
 ## Response Elements
 
+- **tag** -- query/response tag (if set in query)
 - **address** -- IPv4/IPv6 address of destination DNS server
 - **port** -- destination port
 - **transport** -- TCP or UDP
