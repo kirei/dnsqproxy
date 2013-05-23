@@ -25,9 +25,13 @@ my @servers = (
     "2001:500:2c::1",           # j.ns.se.
 );
 
-my $known_good = "kirei.$zone";
-my $known_bad  = "xx--example.$zone";
-my $recursive  = "example.com";
+my $known_good_qname = "whois.nic.$zone";
+my $known_good_qtype = "A";
+my $known_bad_qname  = "xx--example.$zone";
+my $known_bad_qtype  = "SOA";
+my $recursive_qname  = "example.com";
+my $recursive_qtype  = "SOA";
+
 my @transports = ("udp", "tcp");
 
 my %template = (
@@ -88,22 +92,22 @@ foreach my $server (@servers) {
 
         # DELEGATION resulting in referal (ADD11)
         $query{tag}   = "t5";
-        $query{qname} = $known_good;
-        $query{qtype} = "SOA";
+        $query{qname} = $known_good_qname;
+        $query{qtype} = $known_good_qtype;
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
         # DELEGATION resulting in NXDOMAIN (DNS17)
         $query{tag}   = "t6";
-        $query{qname} = $known_bad;
-        $query{qtype} = "SOA";
+        $query{qname} = $known_bad_qname;
+        $query{qtype} = $known_bad_qtype;
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
         # RECURSION (DNS11)
         $query{tag}   = "t7";
-        $query{qname} = $recursive;
-        $query{qtype} = "SOA";
+        $query{qname} = $recursive_qname;
+        $query{qtype} = $recursive_qtype;
         $query{flags} = { do => 0, cd => 0, rd => 1, ad => 0 };
         xmit(\%query);
     }
