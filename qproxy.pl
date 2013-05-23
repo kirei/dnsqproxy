@@ -72,14 +72,18 @@ sub main {
             'version' => $version,
         };
 
-        # set ID if given in query
-        $json_response->{tag} = $json_query->{tag} if ($json_query->{tag});
+        # set tag in response if given in query
+        if ($json_query->{tag}) {
+            $json_response->{tag} = $json_query->{tag};
+        }
 
         if ($dns_response) {
-            $json_response->{'response'} =
-              $dns_response
-              ? encode_base64($dns_response->data, "")
-              : "";
+            if ($dns_response) {
+                $json_response->{'response'} =
+                  encode_base64($dns_response->data, "");
+            } else {
+                $json_response->{'response'} = "";
+            }
         } else {
             $json_response->{'error'} = $resolver->errorstring;
         }
