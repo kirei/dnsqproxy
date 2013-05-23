@@ -29,9 +29,7 @@ use utf8;
 use warnings;
 use strict;
 
-# try to load local::lib if available
-use Class::Load qw(try_load_class);
-try_load_class('local::lib');
+# use local::lib
 
 use Net::DNS;
 use Net::DNS::SEC;
