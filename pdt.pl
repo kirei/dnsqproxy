@@ -59,49 +59,49 @@ foreach my $server (@servers) {
         $query{transport} = $transport;
 
         # SOA without DO=1 (DNS02, DNS03, DNS07)
-        $query{id}    = "t1";
+        $query{tag}   = "t1";
         $query{qname} = $zone;
         $query{qtype} = "SOA";
         $query{flags} = { do => 0, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
         # SOA with DO=1 (DNS02, DNS03, DNS07)
-        $query{id}    = "t2";
+        $query{tag}   = "t2";
         $query{qname} = $zone;
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
         # NS (DNS05, DNS06, DNS08)
-        $query{id}    = "t3";
+        $query{tag}   = "t3";
         $query{qname} = $zone;
         $query{qtype} = "NS";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
         # DNSKEY (DNS16)
-        $query{id}    = "t4";
+        $query{tag}   = "t4";
         $query{qname} = $zone;
         $query{qtype} = "DNSKEY";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
         # DELEGATION resulting in referal (ADD11)
-        $query{id}    = "t5";
+        $query{tag}   = "t5";
         $query{qname} = $known_good;
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
         # DELEGATION resulting in NXDOMAIN (DNS17)
-        $query{id}    = "t6";
+        $query{tag}   = "t6";
         $query{qname} = $known_bad;
         $query{qtype} = "SOA";
         $query{flags} = { do => 1, cd => 0, rd => 0, ad => 0 };
         xmit(\%query);
 
         # RECURSION (DNS11)
-        $query{id}    = "t7";
+        $query{tag}   = "t7";
         $query{qname} = $recursive;
         $query{qtype} = "SOA";
         $query{flags} = { do => 0, cd => 0, rd => 1, ad => 0 };
