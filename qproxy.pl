@@ -41,7 +41,7 @@ use JSON;
 use Net::IP qw(:PROC);
 use Data::Dumper;
 
-my $version = sprintf("qproxy 0.2 Net::DNS %s", Net::DNS->version);
+my $version = sprintf("qproxy 0.3 Net::DNS %s", Net::DNS->version);
 
 sub main {
     while (<STDIN>) {
@@ -72,6 +72,9 @@ sub main {
             'query'     => $query ? encode_base64($query->data, "") : "",
             'version'   => $version,
         };
+
+        # set ID if given in query
+        $blob->{tag} = $param->{tag} if ($param->{tag});
 
         if ($response) {
             $blob->{'response'} =
