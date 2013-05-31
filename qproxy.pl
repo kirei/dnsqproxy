@@ -33,6 +33,7 @@ use strict;
 
 use Net::DNS;
 use Net::DNS::SEC;
+use IO::Socket::INET6;
 use Time::HiRes qw(gettimeofday tv_interval);
 use MIME::Base64;
 use JSON;
