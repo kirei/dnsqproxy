@@ -59,3 +59,24 @@ The following query elements must be specified and has no defaults.
 ## Examples
 
     {"qtype":"SOA","qname":"github.com","address":"8.8.8.8","flags":{"rd":1}}
+
+## Dependencies
+
+The following perl modules are required:
+
+- Data::Dumper
+- IO::Socket::INET6
+- JSON
+- MIME::Base64
+- Net::DNS
+- Net::DNS::SEC
+- Net::IP
+- Time::HiRes
+
+### Required Debian/Ubuntu Packages
+
+- libio-socket-inet6-perl
+- libjson-perl
+- libnet-dns-perl
+- libnet-dns-sec-perl
+- libnet-ip-perl
