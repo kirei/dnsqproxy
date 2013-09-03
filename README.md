@@ -75,6 +75,9 @@ The following perl modules are required:
 
 ### Required Debian/Ubuntu Packages
 
+- perl
+- perl-base
+- perl-modules
 - libio-socket-inet6-perl
 - libjson-perl
 - libnet-dns-perl
